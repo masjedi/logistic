@@ -55,7 +55,7 @@
                             @foreach($projects as $project)
                                     <tr>
                                     <td>{{ $project->title }}</td>
-                                    <td>{!! $project->diffForHumans() !!}</td>
+                                    <td>{!! $project->body !!}</td>
                                     <td>{{ $project->date }}</td>
                                     <td>
                                     <img src="{{asset('img/projects')}}/{{$project->image}}" alt=" {{$project->title}} "
@@ -63,9 +63,12 @@
                                     </td>
 
                                     <td class="m-auto">
-                                            <a  class="btn btn-primary btn-xs inline-form" href="{{route('projects.edit',$project->id)}}">
+                                        @if(auth()->user()->role == "admin")
+
+                                            <a  class="btn btn-primary btn-xs inline-form " href="{{route('projects.edit',$project->id)}}">
                                                 <i class="fa fa-edit"></i>
                                             </a>
+                                            @endif
                                             <form action="{{route('projects.destroy',$project->id)}}" method="post" class="inline-form">
                                                 {{csrf_field()}}
                                                 {{method_field('delete')}}

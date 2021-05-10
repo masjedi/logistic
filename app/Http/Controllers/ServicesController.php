@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Alert;
+use File;
 use Illuminate\Http\Request;
-
+use App\Models\Service;
 class ServicesController extends Controller
 {
     /**
@@ -13,7 +14,8 @@ class ServicesController extends Controller
      */
     public function index()
     {
-        return view('backend.services.index');
+        $services = Service::get();
+        return view('backend.services.index',compact('services'));
     }
 
     /**
@@ -23,7 +25,7 @@ class ServicesController extends Controller
      */
     public function create()
     {
-        //
+        return view('backend.services.create');
     }
 
     /**
@@ -34,7 +36,21 @@ class ServicesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $image = $request->file('image');
+        $fileName = time().'_'.$image->getClientOriginalName();
+        $destinationPath = public_path().'/img/services';
+        $image->move($destinationPath, $fileName);
+
+        $services = new Service;
+        $services->language = $request->input('language');
+        $services->title = $request->input('title');
+        $services->date = $request->input('date');
+        $services->body = $request->input('body');
+        $services->image = $fileName;
+        
+        $services->save();
+        Alert::success('Added!','Added with success!');
+        return redirect()->route('services.index');
     }
 
     /**
@@ -56,7 +72,8 @@ class ServicesController extends Controller
      */
     public function edit($id)
     {
-        //
+        $services = Service::findOrFail($id);
+        return view('backend.services.edit',compact('services'));
     }
 
     /**
@@ -68,7 +85,25 @@ class ServicesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $services = Service::findOrFail($id);
+        $services->language = $request->input('language');
+        $services->title = $request->input('title');
+        $services->body = $request->input('body');
+        $services->date = $request->input('date');
+        if($request->hasFile('image'))
+        {
+            $usersImage = public_path("img/services/{$services->image}"); // get previous image from folder
+            if (File::exists($usersImage)) { // unlink or remove previous image from folder
+                unlink($usersImage);
+            }
+            $file = $request->file('image');
+            $name = time() . $file->getClientOriginalName();
+            $file = $file->move(('img/services/'), $name);
+            $services->image= $name;
+        }
+        $services->save();
+        Alert::success('Updated','Updated successfully!');
+        return redirect()->route('services.index');
     }
 
     /**
@@ -79,6 +114,14 @@ class ServicesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $services = Service::findOrfail($id);
+        $image_path = public_path()."/img/services/".$services->image;  // Value is not URL but directory file path
+       if(File::exists($image_path)) {
+            File::delete($image_path);
+        }
+
+        $services->delete();
+        Alert::error('Deleted!','You just deleted a post!');
+        return redirect()->route('services.index');
     }
 }

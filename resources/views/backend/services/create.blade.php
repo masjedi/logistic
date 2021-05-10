@@ -1,7 +1,7 @@
 @extends('backend.layout.master')
 @section('main-content')
-@section('title1','Add New Project')
-@section('title2','Add New Project')
+@section('title1','Add New Services')
+@section('title2','Add New Services')
 <div class="page-content-wrapper">
 				<div class="page-content">
 					<div class="page-bar">
@@ -24,11 +24,10 @@
 								<div class="card-header">
 									<strong>Add New Event</strong>
 								</div>
-                                <form method="post" action="{{route('projects.update',$projects->id)}}" enctype="multipart/form-data">
+                                <form method="post" action="{{route('services.store')}}" enctype="multipart/form-data">
 								<div class="card-body " id="bar-parent">
-								{{method_field('put')}}
 									@csrf
-									
+
                                         @if(LaravelLocalization::getCurrentLocale()=='en')
                                             <input type="hidden" name="language" value="English">
                                         @elseif(LaravelLocalization::getCurrentLocale()=='fa')
@@ -36,27 +35,23 @@
                                         @else
                                             <input type="hidden" name="language" value="Pashto">
                                         @endif
-								<div class="row">
-										<div class="form-group col-md-6">
-											<label for="simpleFormPassword">Project Name</label>
+										<div class="form-group col-md-12">
+											<label for="simpleFormPassword">Service Name</label>
 											<input type="text" name="title" class="form-control" id="simpleFormPassword"
-												value="{{ $projects->title}} ">
+												placeholder="Enter Title">
                                         </div>
-                                        <div class="form-group col-md-6 ">
-                                            <label for="simpleFormPassword">Event Date</label>
-                                            <input type="date"  name="date" class="form-control"
-                                                  value="{{ $projects->date}} ">
+										<div class="form-group col-md-12">
+											<label for="simpleFormPassword">Post Date</label>
+											<input type="date" name="date" class="form-control" id="simpleFormPassword"
+												placeholder="Post date.......">
                                         </div>
-									</div>
-                                        <label class="body">Event Description</label>
+                                        <label class="body">Service Description</label>
                                         <div class="form-group">
-											<textarea name="body" id="summernote" cols="30" rows="5">
-												{!! $projects->body !!}
-											</textarea>
+											<textarea name="body" id="summernote" cols="30" rows="5"></textarea>
                                         </div>
                                         <div class="form-group">
-                                            <label class="image">Project Image</label>
-                                            <input type="file"  class="form-control" value="{{asset('img/projects')}}/{{$projects->image}}" require="">
+                                            <label class="image">Service Image</label>
+                                            <input type="file" class="form-control" name="image">
                                         </div>
 								</div>
                               <div class="card-footer">
